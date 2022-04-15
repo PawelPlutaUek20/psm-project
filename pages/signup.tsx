@@ -2,7 +2,7 @@ import React from "react";
 import Head from "next/head";
 import Link from "next/link";
 
-import { signInWithEmailAndPassword, getAuth } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { withAuthUser, AuthAction } from "next-firebase-auth";
 
@@ -17,8 +17,8 @@ const Auth = () => {
     setForm((form) => ({ ...form, [e.target.name]: e.target.value }));
   };
 
-  const login = () =>
-    signInWithEmailAndPassword(auth, form.email, form.password).catch((e) =>
+  const signup = () =>
+    createUserWithEmailAndPassword(auth, form.email, form.password).catch((e) =>
       console.log(e)
     );
 
@@ -33,7 +33,7 @@ const Auth = () => {
         <Row className="justify-content-center">
           <Col md="6">
             <form>
-              <p className="h4 text-center mb-4">Sign in</p>
+              <p className="h4 text-center mb-4">Sign up</p>
               <label htmlFor="defaultFormLoginEmailEx" className="grey-text">
                 Your email
               </label>
@@ -57,12 +57,12 @@ const Auth = () => {
                 autoComplete="on"
               />
               <div className="text-center mt-4">
-                <Button className="w-100" color="indigo" onClick={login}>
-                  Login
+                <Button color="indigo" onClick={signup} className="w-100">
+                  Register
                 </Button>
               </div>
               <div className="text-center mt-4">
-                Don't have an account? <Link href="/signup">Register</Link>
+                Have already an account? <Link href="/login">Login here</Link>
               </div>
             </form>
           </Col>
