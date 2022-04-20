@@ -22,8 +22,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         <title>Next.js PWA Example</title>
 
         <link rel="manifest" href="/manifest.json" />
+        <link rel='shortcut icon' href='/favicon.ico' />
         <link
-          href="/icons/favicon-512x512.png"
+          href="/icons/icon-512x512.png"
           rel="icon"
           type="image/png"
           sizes="512x512"
