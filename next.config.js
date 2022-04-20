@@ -11,6 +11,7 @@ module.exports = nextConfig;
 module.exports = withPWA({
   pwa: {
     dest: "public",
+    sw: "firebase-messaging-sw.js",
     runtimeCaching,
   },
 });
