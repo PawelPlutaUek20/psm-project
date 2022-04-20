@@ -1,29 +1,26 @@
 import localforage from "localforage";
 import { AuthAction, useAuthUser, withAuthUser } from "next-firebase-auth";
-import Head from "next/head";
 import React from "react";
 import { Container, Row, Card, Button } from "react-bootstrap";
-import { onMessage } from "firebase/messaging";
+import { onMessageListener } from "../firebase/messaging/initMessaging";
 
-import initMessaging from "../firebase/messaging/initMessaging";
-
-const sendNotification = (fcm_token: string | null) =>
-  sleep(5000).then(() =>
-    fetch("https://fcm.googleapis.com/fcm/send", {
-      method: "POST",
-      headers: {
-        Authorization: `key=${process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        notification: {
-          title: "Fireabse",
-          body: "Firebase is awesome",
-        },
-        to: fcm_token,
-      }),
-    })
-  );
+// const sendNotification = (fcm_token: string | null) =>
+//   sleep(5000).then(() =>
+//     fetch("https://fcm.googleapis.com/fcm/send", {
+//       method: "POST",
+//       headers: {
+//         Authorization: `key=${process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_KEY}`,
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({
+//         notification: {
+//           title: "Fireabse",
+//           body: "Firebase is awesome",
+//         },
+//         to: fcm_token,
+//       }),
+//     })
+//   );
 
 const withinRadius = (
   point: { latitude: number; longitude: number },
@@ -56,19 +53,19 @@ const sleep = (ms: number) => {
 
 const Home = React.memo(() => {
   const user = useAuthUser();
+
+  onMessageListener()
+    .then((payload) => {
+      console.log(payload);
+    })
+    .catch((err) => console.log("failed: ", err));
+
   const [currentPosition, setCurrentPosition] = React.useState<{
     latitude: number;
     longitude: number;
   }>();
 
   const [notified, setNotified] = React.useState<boolean>(false);
-
-  React.useEffect(() => {
-    initMessaging().then(
-      (messaging) =>
-        messaging && onMessage(messaging, (payload) => console.log(payload))
-    );
-  }, []);
 
   React.useEffect(() => {
     const interval = setInterval(
@@ -95,12 +92,9 @@ const Home = React.memo(() => {
       )
     ) {
       setNotified(true);
-      localforage.getItem<string>("fcm_token").then((fcm_token) =>
-        sendNotification(fcm_token).then(() => {
-          console.log("aaa");
-          alert(true);
-        })
-      );
+      localforage
+        .getItem<string>("fcm_token")
+        .then((fcm_token) => alert(fcm_token));
     }
   }, [currentPosition, notified]);
 

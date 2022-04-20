@@ -1,13 +1,12 @@
 import React from "react";
-import Head from "next/head";
 import Link from "next/link";
 
-import { signInWithEmailAndPassword, getAuth } from "firebase/auth";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { withAuthUser, AuthAction } from "next-firebase-auth";
 
+import firebase from "../firebase/firebaseClient";
+
 const Auth = () => {
-  const auth = getAuth();
   const [form, setForm] = React.useState({
     email: "",
     password: "",
@@ -18,14 +17,13 @@ const Auth = () => {
   };
 
   const login = () =>
-    signInWithEmailAndPassword(auth, form.email, form.password).catch((e) =>
-      console.log(e)
-    );
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(form.email, form.password)
+      .catch((e) => console.log(e));
 
   return (
     <Container className="md-container d-flex align-items-center justify-content-center vh-100">
-
-
       <Container>
         <Row className="justify-content-center">
           <Col md="6">

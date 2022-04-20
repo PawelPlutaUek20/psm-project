@@ -17,7 +17,3 @@ const messaging = firebase.messaging();
 messaging.setBackgroundMessageHandler((payload) =>
   console.log("[firebase-messaging-sw.js]", payload)
 );
-
-messaging.onBackgroundMessage((payload) => {
-  console.log("[firebase-messaging-sw.js]", payload);
-});

@@ -1,29 +1,39 @@
-import { getApp } from "firebase/app";
-import { isSupported, getToken, getMessaging } from "firebase/messaging";
+import firebase from "../firebaseClient";
 import localforage from "localforage";
-
+//enables messaging
 const enableMessaging = async () => {
   if (typeof window !== "undefined") {
-    if (await isSupported()) {
+    await import("firebase/messaging");
+    if (firebase.messaging.isSupported()) {
       try {
         if ((await localforage.getItem("fcm_token")) !== null) {
-          console.log(await localforage.getItem("fcm_token"));
           return false;
         }
         await Notification.requestPermission();
-        const messaging = getMessaging(getApp());
-        const token = await getToken(messaging, {
-          vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
+        console.log(firebase.apps);
+        const token = await firebase.messaging().getToken({
+          vapidKey:
+            "BCwi4AOH8ZBDf_PRDRrrheGXbHl64C34hbKxV_4QKiIjeGR2tD_BTmH5MF6MhccxGLZeGU_8wiKzoqIN-TLUZTQ",
         });
         localforage.setItem("fcm_token", token);
         console.log("fcm_token", token);
-        return messaging
       } catch (error) {
         console.log(error);
         throw "Unknown error occurred";
       }
     } else {
       throw "Not Supported";
+    }
+  }
+};
+
+export const onMessageListener = async () => {
+  if (typeof window !== "undefined") {
+    await import("firebase/messaging");
+    if (firebase.messaging.isSupported()) {
+      return new Promise((resolve) => {
+        firebase.messaging().onMessage((payload) => resolve(payload));
+      });
     }
   }
 };
