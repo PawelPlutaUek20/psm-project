@@ -17,6 +17,7 @@ const enableMessaging = async () => {
         });
         localforage.setItem("fcm_token", token);
         console.log("fcm_token", token);
+        return messaging
       } catch (error) {
         console.log(error);
         throw "Unknown error occurred";

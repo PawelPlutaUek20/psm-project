@@ -3,6 +3,7 @@ import { AuthAction, useAuthUser, withAuthUser } from "next-firebase-auth";
 import Head from "next/head";
 import React from "react";
 import { Container, Row, Card, Button } from "react-bootstrap";
+import { onMessage } from "firebase/messaging";
 
 import initMessaging from "../firebase/messaging/initMessaging";
 
@@ -63,7 +64,10 @@ const Home = React.memo(() => {
   const [notified, setNotified] = React.useState<boolean>(false);
 
   React.useEffect(() => {
-    initMessaging();
+    initMessaging().then(
+      (messaging) =>
+        messaging && onMessage(messaging, (payload) => console.log(payload))
+    );
   }, []);
 
   React.useEffect(() => {
