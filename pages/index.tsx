@@ -1,18 +1,107 @@
+import localforage from "localforage";
 import { AuthAction, useAuthUser, withAuthUser } from "next-firebase-auth";
 import Head from "next/head";
 import React from "react";
 import { Container, Row, Card, Button } from "react-bootstrap";
 
+import initMessaging from "../firebase/messaging/initMessaging";
+
+const sendNotification = (fcm_token: string | null) =>
+  sleep(5000).then(() =>
+    fetch("https://fcm.googleapis.com/fcm/send", {
+      method: "POST",
+      headers: {
+        Authorization: `key=${process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        notification: {
+          title: "Fireabse",
+          body: "Firebase is awesome",
+        },
+        to: fcm_token,
+      }),
+    })
+  );
+
+const withinRadius = (
+  point: { latitude: number; longitude: number },
+  interest: { latitude: number; longitude: number },
+  kms: number
+) => {
+  let R = 6371;
+  let deg2rad = (degrees: number) => {
+    return degrees * (Math.PI / 180);
+  };
+
+  let dLat = deg2rad(interest.latitude - point.latitude);
+  let dLon = deg2rad(interest.longitude - point.longitude);
+
+  let a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(deg2rad(point.latitude)) *
+      Math.cos(deg2rad(interest.latitude)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  let c = 2 * Math.asin(Math.sqrt(a));
+  let d = R * c;
+
+  return d <= kms;
+};
+
+const sleep = (ms: number) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
+
 const Home = React.memo(() => {
   const user = useAuthUser();
+  const [currentPosition, setCurrentPosition] = React.useState<{
+    latitude: number;
+    longitude: number;
+  }>();
 
-  console.log("aaa", user)
+  const [notified, setNotified] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    initMessaging();
+  }, []);
+
+  React.useEffect(() => {
+    const interval = setInterval(
+      () =>
+        navigator.geolocation.getCurrentPosition((position) => {
+          const { latitude, longitude } = position.coords;
+          setCurrentPosition({ latitude, longitude });
+        }),
+      5000
+    );
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
+  React.useEffect(() => {
+    if (
+      currentPosition &&
+      !notified &&
+      withinRadius(
+        currentPosition,
+        { latitude: 50.0671743, longitude: 20.0263019 },
+        1
+      )
+    ) {
+      setNotified(true);
+      localforage.getItem<string>("fcm_token").then((fcm_token) =>
+        sendNotification(fcm_token).then(() => {
+          console.log("aaa");
+          alert(true);
+        })
+      );
+    }
+  }, [currentPosition, notified]);
+
   return (
     <Container className="md-container">
-      <Head>
-        <title>ReactJS with react-bootstrap</title>
-        <link rel="icon" href="/favicon-32x32.png" />
-      </Head>
       <Container>
         <h1>
           Welcome to <a href="https://nextjs.org">Next.js!</a>
@@ -28,9 +117,7 @@ const Home = React.memo(() => {
                 <Card.Text>
                   Find in-depth information about Next.js features and API.
                 </Card.Text>
-                <Button variant="primary" href="https://nextjs.org/docs">
-                  More &rarr;
-                </Button>
+                <Button variant="primary">More &rarr;</Button>
               </Card.Body>
             </Card>
             <Card className="sml-card">
@@ -67,10 +154,7 @@ const Home = React.memo(() => {
                   Instantly deploy your Next.js site to a public URL with
                   Vercel.
                 </Card.Text>
-                <Button
-                  variant="primary"
-                  onClick={() => user.signOut()}
-                >
+                <Button variant="primary" onClick={() => user.signOut()}>
                   More &rarr;
                 </Button>
               </Card.Body>
@@ -86,12 +170,13 @@ const Home = React.memo(() => {
           rel="noopener noreferrer"
         >
           Powered by{" "}
-          <img src="/vercel.svg" alt="Vercel Logo" className="sml-logo" />
         </a>
       </footer>
     </Container>
   );
 });
+
+Home.displayName = "Home";
 
 export default withAuthUser({
   whenUnauthedBeforeInit: AuthAction.RETURN_NULL,

@@ -24,10 +24,7 @@ const Auth = () => {
 
   return (
     <Container className="md-container d-flex align-items-center justify-content-center vh-100">
-      <Head>
-        <title>ReactJS with react-bootstrap</title>
-        <link rel="icon" href="/favicon-32x32.png" />
-      </Head>
+
 
       <Container>
         <Row className="justify-content-center">

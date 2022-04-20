@@ -24,10 +24,7 @@ const Auth = () => {
 
   return (
     <Container className="md-container d-flex align-items-center justify-content-center vh-100">
-      <Head>
-        <title>ReactJS with react-bootstrap</title>
-        <link rel="icon" href="/favicon-32x32.png" />
-      </Head>
+
 
       <Container>
         <Row className="justify-content-center">
@@ -62,7 +59,7 @@ const Auth = () => {
                 </Button>
               </div>
               <div className="text-center mt-4">
-                Don't have an account? <Link href="/signup">Register</Link>
+                Dont have an account? <Link href="/signup">Register</Link>
               </div>
             </form>
           </Col>
