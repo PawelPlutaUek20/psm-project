@@ -12,8 +12,7 @@ const enableMessaging = async () => {
         await Notification.requestPermission();
         console.log(firebase.apps);
         const token = await firebase.messaging().getToken({
-          vapidKey:
-            "BCwi4AOH8ZBDf_PRDRrrheGXbHl64C34hbKxV_4QKiIjeGR2tD_BTmH5MF6MhccxGLZeGU_8wiKzoqIN-TLUZTQ",
+          vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
         });
         localforage.setItem("fcm_token", token);
         console.log("fcm_token", token);
