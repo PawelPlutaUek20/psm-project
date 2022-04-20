@@ -3,10 +3,8 @@ import { NextApiHandler } from "next";
 import { setAuthCookies } from "next-firebase-auth";
 
 import initAuth from "../../firebase/auth/initAuth";
-import initMessaging from "../../firebase/messaging/initMessaging";
 
 initAuth();
-initMessaging();
 
 const handler: NextApiHandler = async (req, res) => {
   console.log("bbb", req, res);

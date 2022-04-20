@@ -2,7 +2,7 @@ import localforage from "localforage";
 import { AuthAction, useAuthUser, withAuthUser } from "next-firebase-auth";
 import React from "react";
 import { Container, Row, Card, Button } from "react-bootstrap";
-import { onMessageListener } from "../firebase/messaging/initMessaging";
+import initMessaging from "../firebase/messaging/initMessaging";
 
 // const sendNotification = (fcm_token: string | null) =>
 //   sleep(5000).then(() =>
@@ -54,7 +54,7 @@ const sleep = (ms: number) => {
 const Home = React.memo(() => {
   const user = useAuthUser();
 
-  onMessageListener()
+  initMessaging()
     .then((payload) => {
       console.log(payload);
     })

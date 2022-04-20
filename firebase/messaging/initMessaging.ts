@@ -6,33 +6,24 @@ const enableMessaging = async () => {
     await import("firebase/messaging");
     if (firebase.messaging.isSupported()) {
       try {
-        if ((await localforage.getItem("fcm_token")) !== null) {
-          return false;
+        if ((await localforage.getItem("fcm_token")) === null) {
+          await Notification.requestPermission();
+          console.log(firebase.apps);
+          const token = await firebase.messaging().getToken({
+            vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
+          });
+          await localforage.setItem("fcm_token", token);
+          console.log("fcm_token", token);
         }
-        await Notification.requestPermission();
-        console.log(firebase.apps);
-        const token = await firebase.messaging().getToken({
-          vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
+        return new Promise((resolve) => {
+          firebase.messaging().onMessage((payload) => resolve(payload));
         });
-        localforage.setItem("fcm_token", token);
-        console.log("fcm_token", token);
       } catch (error) {
         console.log(error);
         throw "Unknown error occurred";
       }
     } else {
       throw "Not Supported";
-    }
-  }
-};
-
-export const onMessageListener = async () => {
-  if (typeof window !== "undefined") {
-    await import("firebase/messaging");
-    if (firebase.messaging.isSupported()) {
-      return new Promise((resolve) => {
-        firebase.messaging().onMessage((payload) => resolve(payload));
-      });
     }
   }
 };
