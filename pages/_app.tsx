@@ -5,6 +5,7 @@ import { MantineProvider } from "@mantine/core";
 import { NotificationsProvider } from "@mantine/notifications";
 
 import initAuth from "../firebase/auth/initAuth";
+import GeolocationProvider from "../components/GeolocationProvider";
 
 initAuth();
 
@@ -43,7 +44,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         }}
       >
         <NotificationsProvider>
-          <Component {...pageProps} />
+          <GeolocationProvider>
+            <Component {...pageProps} />
+          </GeolocationProvider>
         </NotificationsProvider>
       </MantineProvider>
     </>
