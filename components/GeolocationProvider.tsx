@@ -13,7 +13,7 @@ export const GeolocationContext = React.createContext<Geolocation | undefined>(
   undefined
 );
 
-const GeolocationProvider: React.FC<Props> = ({ children }) => {
+function GeolocationProvider({ children }: Props) {
   const [geolocation, setGeolocation] = React.useState<Geolocation>();
 
   React.useEffect(() => {
@@ -35,7 +35,7 @@ const GeolocationProvider: React.FC<Props> = ({ children }) => {
       {children}
     </GeolocationContext.Provider>
   );
-};
+}
 
 export default GeolocationProvider;
 

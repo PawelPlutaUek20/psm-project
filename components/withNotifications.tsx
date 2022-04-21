@@ -4,9 +4,10 @@ import { showNotification } from "@mantine/notifications";
 
 import initMessaging from "../firebase/messaging/initMessaging";
 
-export const withNotifications =
-  <T,>(Component: React.ComponentType<T>) =>
-  (props: T) => {
+export function withNotifications<T>(
+  Component: React.ComponentType<T>
+) {
+  return function (props: T) {
     initMessaging()
       .then((payload) => {
         showNotification({
@@ -17,3 +18,4 @@ export const withNotifications =
       .catch((err) => console.log("failed: ", err));
     return <Component {...props} />;
   };
+}
