@@ -1,69 +1,113 @@
 import React from "react";
 import Link from "next/link";
 
-import { Button, Col, Container, Row } from "react-bootstrap";
 import { withAuthUser, AuthAction } from "next-firebase-auth";
+
+import {
+  Paper,
+  Title,
+  TextInput,
+  PasswordInput,
+  Button,
+  Anchor,
+  Text,
+  createStyles,
+} from "@mantine/core";
+import { useSetState } from "@mantine/hooks";
 
 import firebase from "../firebase/firebaseClient";
 
+const useStyles = createStyles((theme) => ({
+  wrapper: {
+    height: "100vh",
+    backgroundSize: "cover",
+    backgroundImage:
+      "url(https://images.unsplash.com/photo-1484242857719-4b9144542727?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1280&q=80)",
+  },
+
+  form: {
+    borderRight: `1px solid ${
+      theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.colors.gray[3]
+    }`,
+    height: "100vh",
+    maxWidth: 450,
+    paddingTop: 80,
+
+    [`@media (max-width: ${theme.breakpoints.sm}px)`]: {
+      maxWidth: "100%",
+    },
+  },
+
+  title: {
+    color: theme.colorScheme === "dark" ? theme.white : theme.black,
+    fontFamily: `Greycliff CF, ${theme.fontFamily}`,
+  },
+
+  logo: {
+    color: theme.colorScheme === "dark" ? theme.white : theme.black,
+    width: 120,
+    display: "block",
+    marginLeft: "auto",
+    marginRight: "auto",
+  },
+}));
+
 const Auth = () => {
-  const [form, setForm] = React.useState({
+  const { classes } = useStyles();
+  const [state, setState] = useSetState({
     email: "",
     password: "",
   });
 
-  const updateForm = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm((form) => ({ ...form, [e.target.name]: e.target.value }));
-  };
-
   const signup = () =>
     firebase
       .auth()
-      .createUserWithEmailAndPassword(form.email, form.password)
+      .createUserWithEmailAndPassword(state.email, state.password)
       .catch((e) => console.log(e));
 
   return (
-    <Container className="md-container d-flex align-items-center justify-content-center vh-100">
-      <Container>
-        <Row className="justify-content-center">
-          <Col md="6">
-            <form>
-              <p className="h4 text-center mb-4">Sign up</p>
-              <label htmlFor="defaultFormLoginEmailEx" className="grey-text">
-                Your email
-              </label>
-              <input
-                name="email"
-                type="email"
-                onChange={updateForm}
-                id="defaultFormLoginEmailEx"
-                className="form-control"
-              />
-              <br />
-              <label htmlFor="defaultFormLoginPasswordEx" className="grey-text">
-                Your password
-              </label>
-              <input
-                name="password"
-                onChange={updateForm}
-                type="password"
-                id="defaultFormLoginPasswordEx"
-                className="form-control"
-                autoComplete="on"
-              />
-              <div className="text-center mt-4">
-                <Button color="indigo" onClick={signup} className="w-100">
-                  Register
-                </Button>
-              </div>
-              <div className="text-center mt-4">
-                Have already an account? <Link href="/login">Login here</Link>
-              </div>
-            </form>
-          </Col>
-        </Row>
-      </Container>
-    </Container>
+    <div className={classes.wrapper}>
+      <Paper className={classes.form} radius={0} p={30}>
+        <Title
+          order={2}
+          className={classes.title}
+          align="center"
+          mt="md"
+          mb={50}
+        >
+          Welcome to Mantine!
+        </Title>
+
+        <TextInput
+          value={state.email}
+          label="Email address"
+          placeholder="hello@gmail.com"
+          size="md"
+          onChange={(e) => {
+            setState({ email: e.target.value });
+          }}
+        />
+        <PasswordInput
+          label="Password"
+          placeholder="Your password"
+          mt="md"
+          size="md"
+          onChange={(e) => {
+            setState({ password: e.target.value });
+          }}
+        />
+        <Button fullWidth mt="xl" size="md" onClick={signup}>
+          Register
+        </Button>
+
+        <Text align="center" mt="md">
+          Already have an account?{" "}
+          <Link href="/login">
+            <Anchor<"a"> weight={700}>Login</Anchor>
+          </Link>
+        </Text>
+      </Paper>
+    </div>
   );
 };
 

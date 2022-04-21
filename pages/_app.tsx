@@ -1,7 +1,8 @@
 import type { AppProps } from "next/app";
 import Head from "next/head";
 
-import "bootstrap/dist/css/bootstrap.min.css";
+import { MantineProvider } from "@mantine/core";
+import { NotificationsProvider } from "@mantine/notifications";
 
 import initAuth from "../firebase/auth/initAuth";
 
@@ -22,7 +23,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <title>Next.js PWA Example</title>
 
         <link rel="manifest" href="/manifest.json" />
-        <link rel='shortcut icon' href='/favicon.ico' />
+        <link rel="shortcut icon" href="/favicon.ico" />
         <link
           href="/icons/icon-512x512.png"
           rel="icon"
@@ -32,7 +33,19 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="apple-touch-icon" href="/apple-icon.png"></link>
         <meta name="theme-color" content="#317EFB" />
       </Head>
-      <Component {...pageProps} />
+
+      <MantineProvider
+        withGlobalStyles
+        withNormalizeCSS
+        theme={{
+          /** Put your mantine theme override here */
+          colorScheme: "light",
+        }}
+      >
+        <NotificationsProvider>
+          <Component {...pageProps} />
+        </NotificationsProvider>
+      </MantineProvider>
     </>
   );
 }

@@ -35,8 +35,8 @@ yarn-error.log*
 *.tsbuildinfo
 
 # service workers
-**/public/sw.js
+**/public/firebase-messaging-sw.js
+**/public/firebase-messaging-sw.js.map
 **/public/workbox-*.js
-**/public/sw.js.map
 **/public/workbox-*.js.map
 **/public/worker-*.js
