@@ -3,10 +3,10 @@ import React from "react";
 import compose from "lodash/fp/compose";
 import { AuthAction, useAuthUser, withAuthUser } from "next-firebase-auth";
 
-import { withNotifications } from "../components/withNotifications";
+import withNotifications from "../components/withNotifications";
 import { GeolocationContext } from "../components/GeolocationProvider";
 
-const Home = React.memo(function Component() {
+const Home = React.memo(() => {
   const user = useAuthUser();
   const geolocation = React.useContext(GeolocationContext);
 
@@ -19,6 +19,8 @@ const Home = React.memo(function Component() {
     </>
   );
 });
+
+Home.displayName = "Home";
 
 export default compose(
   withAuthUser({
