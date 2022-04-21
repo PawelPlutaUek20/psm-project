@@ -37,8 +37,6 @@ const GeolocationProvider: React.FC<Props> = ({ children }) => {
   );
 };
 
-GeolocationProvider.displayName = "GeolocationProvider";
-
 export default GeolocationProvider;
 
 // const sendNotification = (fcm_token: string | null) =>

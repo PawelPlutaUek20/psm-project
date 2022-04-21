@@ -52,7 +52,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-const Auth = () => {
+const Signup = () => {
   const { classes } = useStyles();
   const [state, setState] = useSetState({
     email: "",
@@ -115,4 +115,4 @@ export default withAuthUser({
   whenAuthed: AuthAction.REDIRECT_TO_APP,
   whenUnauthedBeforeInit: AuthAction.RETURN_NULL,
   whenUnauthedAfterInit: AuthAction.RENDER,
-})(Auth);
+})(Signup);
