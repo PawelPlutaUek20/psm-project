@@ -1,27 +1,32 @@
 import React from "react";
 
-export type Geolocation = {
-  latitude: number;
-  longitude: number;
-};
+import isNumber from "lodash/isNumber";
+
+import { Geolocation } from "../types";
 
 type Props = {
   children: React.ReactNode;
 };
 
-export const GeolocationContext = React.createContext<Geolocation | undefined>(
-  undefined
-);
+const DEFAULT_GEOLOCATION = {
+  latitude: 51.505,
+  longitude: -0.09,
+};
+
+export const GeolocationContext =
+  React.createContext<Geolocation>(DEFAULT_GEOLOCATION);
 
 const GeolocationProvider: React.FC<Props> = ({ children }) => {
-  const [geolocation, setGeolocation] = React.useState<Geolocation>();
+  const [geolocation, setGeolocation] =
+    React.useState<Geolocation>(DEFAULT_GEOLOCATION);
 
   React.useEffect(() => {
     const interval = setInterval(
       () =>
         navigator.geolocation.getCurrentPosition((position) => {
           const { latitude, longitude } = position.coords;
-          setGeolocation({ latitude, longitude });
+          if (isNumber(latitude) && isNumber(longitude))
+            setGeolocation({ latitude, longitude });
         }),
       5000
     );

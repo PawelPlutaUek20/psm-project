@@ -1,27 +1,18 @@
 import React from "react";
+import dynamic from "next/dynamic";
 
 import compose from "lodash/fp/compose";
-import { AuthAction, useAuthUser, withAuthUser } from "next-firebase-auth";
+import { AuthAction, withAuthUser } from "next-firebase-auth";
 
 import { withNotifications } from "../components/withNotifications";
 import { GeolocationContext } from "../components/GeolocationProvider";
-import Link from "next/link";
 
-const Home = React.memo(() => {
-  const user = useAuthUser();
+const MapComponent = dynamic(() => import("../components/Map"), { ssr: false });
+
+const Map = React.memo(() => {
   const geolocation = React.useContext(GeolocationContext);
 
-  return (
-    <>
-      <button onClick={() => alert(JSON.stringify(geolocation))}>
-        my location
-      </button>
-      <button onClick={() => user.signOut()}>sign out</button>
-      <Link href="/map">
-        <button>map</button>
-      </Link>
-    </>
-  );
+  return <MapComponent geolocation={geolocation} />;
 });
 
 export default compose(
@@ -30,4 +21,4 @@ export default compose(
     whenUnauthedAfterInit: AuthAction.REDIRECT_TO_LOGIN,
   }),
   withNotifications
-)(Home);
+)(Map);
