@@ -54,8 +54,8 @@ const Home: React.FC<Props> = React.memo(({ todos }) => {
         add random todo
       </button>
       <ol>
-        {todos.map((todo) => (
-          <li>{todo.title}</li>
+        {todos.map((todo, index) => (
+          <li key={index}>{todo.title}</li>
         ))}
       </ol>
     </>
