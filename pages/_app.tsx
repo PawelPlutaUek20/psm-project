@@ -1,4 +1,5 @@
 import type { AppProps } from "next/app";
+import { useRouter } from "next/router";
 import Head from "next/head";
 
 import { MantineProvider } from "@mantine/core";
@@ -10,6 +11,8 @@ import GeolocationProvider from "../components/GeolocationProvider";
 initAuth();
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const router = useRouter();
+  const publicRoutes = ["/login", "/signup"];
   return (
     <>
       <Head>
@@ -43,11 +46,15 @@ function MyApp({ Component, pageProps }: AppProps) {
           colorScheme: "light",
         }}
       >
-        <NotificationsProvider>
-          <GeolocationProvider>
-            <Component {...pageProps} />
-          </GeolocationProvider>
-        </NotificationsProvider>
+        {publicRoutes.includes(router.pathname) ? (
+          <Component {...pageProps} />
+        ) : (
+          <NotificationsProvider>
+            <GeolocationProvider>
+              <Component {...pageProps} />
+            </GeolocationProvider>
+          </NotificationsProvider>
+        )}
       </MantineProvider>
     </>
   );
