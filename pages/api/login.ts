@@ -7,7 +7,6 @@ import initAuth from "../../firebase/auth/initAuth";
 initAuth();
 
 const handler: NextApiHandler = async (req, res) => {
-  console.log("bbb", req, res);
   try {
     await setAuthCookies(req, res);
   } catch (e) {

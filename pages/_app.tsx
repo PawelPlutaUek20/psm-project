@@ -4,7 +4,9 @@ import Head from "next/head";
 
 import { MantineProvider } from "@mantine/core";
 import { NotificationsProvider } from "@mantine/notifications";
+import { FuegoProvider } from "@nandorojo/swr-firestore";
 
+import fuego from "../firebase/firestore/initFirestore";
 import initAuth from "../firebase/auth/initAuth";
 import GeolocationProvider from "../components/GeolocationProvider";
 
@@ -49,11 +51,13 @@ function MyApp({ Component, pageProps }: AppProps) {
         {publicRoutes.includes(router.pathname) ? (
           <Component {...pageProps} />
         ) : (
-          <NotificationsProvider>
-            <GeolocationProvider>
-              <Component {...pageProps} />
-            </GeolocationProvider>
-          </NotificationsProvider>
+          <FuegoProvider fuego={fuego}>
+            <NotificationsProvider>
+              <GeolocationProvider>
+                <Component {...pageProps} />
+              </GeolocationProvider>
+            </NotificationsProvider>
+          </FuegoProvider>
         )}
       </MantineProvider>
     </>

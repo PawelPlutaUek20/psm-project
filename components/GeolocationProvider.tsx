@@ -1,14 +1,14 @@
 import React from "react";
 
-import isNumber from "lodash/isNumber";
 import round from "lodash/round";
 
+import { useInterval } from "../hooks/useInterval";
 import { Geolocation } from "../types";
 
 type Props = {
   children: React.ReactNode;
 };
-
+const DELAY = 5000;
 const DEFAULT_GEOLOCATION = {
   latitude: 51.505,
   longitude: -0.09,
@@ -21,23 +21,17 @@ const GeolocationProvider: React.FC<Props> = ({ children }) => {
   const [geolocation, setGeolocation] =
     React.useState<Geolocation>(DEFAULT_GEOLOCATION);
 
-  React.useEffect(() => {
-    const interval = setInterval(
-      () =>
-        navigator.geolocation.getCurrentPosition((position) => {
-          const { latitude, longitude } = position.coords;
-          if (isNumber(latitude) && isNumber(longitude))
-            setGeolocation({
-              latitude: round(latitude, 3),
-              longitude: round(longitude, 3),
-            });
-        }),
-      5000
-    );
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
+  const getGeolocation = () => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      const { latitude, longitude } = position.coords;
+      setGeolocation({
+        latitude: round(latitude, 3),
+        longitude: round(longitude, 3),
+      });
+    });
+  };
+
+  useInterval(getGeolocation, DELAY);
 
   return (
     <GeolocationContext.Provider

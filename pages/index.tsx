@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
-import { useRouter } from "next/router";
 
+import { useCollection } from "@nandorojo/swr-firestore";
 import compose from "lodash/fp/compose";
 import {
   AuthAction,
@@ -10,7 +10,7 @@ import {
   withAuthUserTokenSSR,
 } from "next-firebase-auth";
 
-import { getUserTodos } from "./api/todos";
+import { getTodos } from "./api/todos";
 
 import { withNotifications } from "../components/withNotifications";
 import { GeolocationContext } from "../components/GeolocationProvider";
@@ -21,13 +21,16 @@ type Props = {
 };
 
 const Home: React.FC<Props> = ({ todos }) => {
-  const router = useRouter();
   const user = useAuthUser();
   const geolocation = React.useContext(GeolocationContext);
 
-  const refreshData = () => {
-    router.replace(router.asPath);
-  };
+  const { data, add } = useCollection<Todo>(
+    user.id ? "todos" : null,
+    {
+      where: ["userId", "==", user.id],
+    },
+    { initialData: todos, revalidateOnMount: true }
+  );
   return (
     <>
       <button onClick={() => alert(JSON.stringify(geolocation))}>
@@ -38,24 +41,18 @@ const Home: React.FC<Props> = ({ todos }) => {
         <button>map</button>
       </Link>
       <button
-        onClick={() =>
-          fetch("api/todos", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              userId: user.id,
-              title: (Math.random() + 1).toString(36).substring(7),
-            }),
-          }).then(() => refreshData())
+        onClick={async () =>
+          await add({
+            title: (Math.random() + 1).toString(36).substring(7),
+            userId: user.id!,
+          })
         }
       >
         add random todo
       </button>
       <ol>
-        {todos.map((todo, index) => (
-          <li key={index}>{todo.title}</li>
+        {data?.map((todo, key) => (
+          <li key={key}>{todo.title}</li>
         ))}
       </ol>
     </>
@@ -65,12 +62,8 @@ const Home: React.FC<Props> = ({ todos }) => {
 export const getServerSideProps = withAuthUserTokenSSR({
   whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
 })(async ({ AuthUser }) => {
-  const todos = AuthUser.id && (await getUserTodos(AuthUser.id));
-  return {
-    props: {
-      todos,
-    },
-  };
+  const todos = AuthUser.id && (await getTodos(AuthUser.id));
+  return { props: { todos } };
 });
 
 export default compose(
