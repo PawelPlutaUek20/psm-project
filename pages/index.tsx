@@ -24,7 +24,7 @@ const Home: React.FC<Props> = ({ todos }) => {
   const user = useAuthUser();
   const geolocation = React.useContext(GeolocationContext);
 
-  const { data, add } = useCollection<Todo>(
+  const { data, add } = useCollection<Todo, any>(
     user.id ? "todos" : null,
     {
       where: ["userId", "==", user.id],
@@ -63,7 +63,7 @@ export const getServerSideProps = withAuthUserTokenSSR({
   whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
 })(async ({ AuthUser }) => {
   const todos = AuthUser.id && (await getTodos(AuthUser.id));
-  return { props: { todos } };
+  return { props: { ["todos"]: todos } };
 });
 
 export default compose(
