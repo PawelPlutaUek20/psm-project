@@ -1,6 +1,7 @@
 import React from "react";
 
 import isNumber from "lodash/isNumber";
+import round from "lodash/round";
 
 import { Geolocation } from "../types";
 
@@ -26,7 +27,10 @@ const GeolocationProvider: React.FC<Props> = ({ children }) => {
         navigator.geolocation.getCurrentPosition((position) => {
           const { latitude, longitude } = position.coords;
           if (isNumber(latitude) && isNumber(longitude))
-            setGeolocation({ latitude, longitude });
+            setGeolocation({
+              latitude: round(latitude, 3),
+              longitude: round(longitude, 3),
+            });
         }),
       5000
     );
@@ -36,7 +40,9 @@ const GeolocationProvider: React.FC<Props> = ({ children }) => {
   }, []);
 
   return (
-    <GeolocationContext.Provider value={geolocation}>
+    <GeolocationContext.Provider
+      value={React.useMemo(() => geolocation, [JSON.stringify(geolocation)])}
+    >
       {children}
     </GeolocationContext.Provider>
   );

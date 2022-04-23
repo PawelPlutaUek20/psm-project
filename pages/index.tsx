@@ -20,7 +20,7 @@ type Props = {
   todos: Todo[];
 };
 
-const Home: React.FC<Props> = React.memo(({ todos }) => {
+const Home: React.FC<Props> = ({ todos }) => {
   const router = useRouter();
   const user = useAuthUser();
   const geolocation = React.useContext(GeolocationContext);
@@ -60,7 +60,7 @@ const Home: React.FC<Props> = React.memo(({ todos }) => {
       </ol>
     </>
   );
-});
+};
 
 export const getServerSideProps = withAuthUserTokenSSR({
   whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
