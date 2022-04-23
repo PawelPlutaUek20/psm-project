@@ -37,6 +37,9 @@ const Home: React.FC<Props> = ({ todos }) => {
       <Link href="/map">
         <button>map</button>
       </Link>
+      <Link href="/harmonogram">
+        <button>harmonogram</button>
+      </Link>
       <button
         onClick={() =>
           fetch("api/todos", {
