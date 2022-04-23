@@ -9,5 +9,6 @@ export type Todo = {
   geolocation: Geolocation;
   content: string;
   status: string;
+  color:string;
 };
 

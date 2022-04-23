@@ -10,7 +10,7 @@ import {
 
 import { withNotifications } from "../components/withNotifications";
 import { GeolocationContext } from "../components/GeolocationProvider";
-import { Textarea, TextInput, Button } from "@mantine/core";
+import { Textarea, TextInput, Button, ColorPicker } from "@mantine/core";
 import { getUserTodos } from "./api/todos";
 import { Todo } from "../types";
 import router from "next/router";
@@ -27,13 +27,11 @@ const Harmonogram = React.memo<Props>(({todos} ) => {
   const [todo,setTodo]=useState({
     title: "",
     content: "",
-    status:"idk"
+    status:"idk",
+    colour:"#39004d"
   })
 
   const addtask=()=>{
-    console.log('todo treract',todo)
-    console.log('todo treract',todo.title)
-
     fetch("api/todos", {
       method: "POST",
       headers: {
@@ -43,7 +41,8 @@ const Harmonogram = React.memo<Props>(({todos} ) => {
         userId: user.id,
         title: todo.title,
         geolocation: geolocation,
-        content: todo.content
+        content: todo.content,
+        colour:todo.colour
       }),
     }).then(() => refreshData())
 
@@ -66,10 +65,16 @@ const Harmonogram = React.memo<Props>(({todos} ) => {
       value={todo.content}
       onChange={(event)=>setTodo({...todo,content:event.currentTarget.value})}
     />
-    <Button fullWidth onClick={addtask}>add task</Button>
+    <ColorPicker
+      format="hex"
+      value={todo.colour}
+      swatches={['#25262b', '#868e96', '#fa5252', '#e64980', '#be4bdb', '#7950f2', '#4c6ef5', '#228be6', '#15aabf', '#12b886', '#40c057', '#82c91e', '#fab005', '#fd7e14']}
+      onChange={(color)=>{setTodo({...todo,colour:color})}}
+    />
+    <Button style={{margin:"10px 0"}} radius="lg" fullWidth onClick={addtask}>add task</Button>
     <ol>
         {todos.map((todo, index) => (
-          <li key={index}><h5>{todo.title}</h5>{todo.content}</li>
+          <li key={index}><h4 style={{margin:"0 0" }}>{todo.title}</h4>{todo.content},{todo.colour}</li>
         ))}
       </ol>
   </>);
