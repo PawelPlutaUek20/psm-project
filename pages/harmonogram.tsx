@@ -17,7 +17,7 @@ import { useCollection } from "@nandorojo/swr-firestore";
 
 const Harmonogram = React.memo(( ) => {
   const user = useAuthUser();
-  const geolocation = React.useContext(GeolocationContext);
+  const { geolocation, setGeolocation } = React.useContext(GeolocationContext);
 
    const { data, add } = useCollection<Todo, any>(
     user.id ? "todos" : null,
