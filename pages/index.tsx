@@ -1,36 +1,21 @@
 import React from "react";
 import Link from "next/link";
 
-import { useCollection } from "@nandorojo/swr-firestore";
 import compose from "lodash/fp/compose";
-import {
-  AuthAction,
-  useAuthUser,
-  withAuthUser,
-  withAuthUserTokenSSR,
-} from "next-firebase-auth";
-
-import { getTodos } from "./api/todos";
+import { useCollection } from "@nandorojo/swr-firestore";
+import { AuthAction, useAuthUser, withAuthUser } from "next-firebase-auth";
 
 import { withNotifications } from "../components/withNotifications";
 import { GeolocationContext } from "../components/GeolocationProvider";
 import { Todo } from "../types";
 
-type Props = {
-  todos: Todo[];
-};
-
-const Home: React.FC<Props> = ({ todos }) => {
+const Home: React.FC = () => {
   const user = useAuthUser();
   const { geolocation, setGeolocation } = React.useContext(GeolocationContext);
 
-  const { data, add } = useCollection<Todo, any>(
-    user.id ? "todos" : null,
-    {
-      where: ["userId", "==", user.id],
-    },
-    { initialData: todos, revalidateOnMount: true }
-  );
+  const { data, add } = useCollection<Todo>(user.id ? "todos" : null, {
+    where: ["userId", "==", user.id],
+  });
   return (
     <>
       <button onClick={() => alert(JSON.stringify(geolocation))}>
@@ -70,13 +55,6 @@ const Home: React.FC<Props> = ({ todos }) => {
     </>
   );
 };
-
-export const getServerSideProps = withAuthUserTokenSSR({
-  whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
-})(async ({ AuthUser }) => {
-  const todos = AuthUser.id && (await getTodos(AuthUser.id));
-  return { props: { ["todos"]: todos } };
-});
 
 export default compose(
   withAuthUser({
