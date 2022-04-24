@@ -35,6 +35,7 @@ const GeolocationProvider: React.FC<Props> = ({ children }) => {
   const getGeolocation = () => {
     if (JSON.stringify(geolocation) === JSON.stringify(UEK_GEOLOCATION)) {
       sendNotification();
+      setGeolocation(DEFAULT_GEOLOCATION);
     }
     navigator.geolocation.getCurrentPosition((position) => {
       const { latitude, longitude } = position.coords;
