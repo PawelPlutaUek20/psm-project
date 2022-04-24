@@ -75,7 +75,7 @@ const Signup = () => {
           mt="md"
           mb={50}
         >
-          Welcome to Mantine!
+          Sign up
         </Title>
 
         <TextInput
@@ -102,8 +102,8 @@ const Signup = () => {
 
         <Text align="center" mt="md">
           Already have an account?{" "}
-          <Link href="/login">
-            <Anchor<"a"> weight={700}>Login</Anchor>
+          <Link href="/login" passHref>
+            <Anchor<"a"> weight={700}>Sign in</Anchor>
           </Link>
         </Text>
       </Paper>
