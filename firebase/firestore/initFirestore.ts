@@ -1,7 +1,6 @@
-import firebase from "firebase/app";
 import "firebase/firestore";
-import "firebase/auth";
 
+import firebase from "../firebaseClient";
 import firebaseConfig from "../firebaseConfig";
 
 type Config = Parameters<typeof firebase.initializeApp>[0];

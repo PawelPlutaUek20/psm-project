@@ -1,6 +1,5 @@
+import localforage from "localforage";
 import React from "react";
-
-import round from "lodash/round";
 
 import { useInterval } from "../hooks/useInterval";
 import { Geolocation } from "../types";
@@ -8,25 +7,41 @@ import { Geolocation } from "../types";
 type Props = {
   children: React.ReactNode;
 };
-const DELAY = 5000;
+
+type GeolocationContext = {
+  geolocation: Geolocation;
+  setGeolocation: React.Dispatch<React.SetStateAction<Geolocation>>;
+};
+
+const DELAY = 5000; // 5 seconds
 const DEFAULT_GEOLOCATION = {
   latitude: 51.505,
   longitude: -0.09,
 };
+const UEK_GEOLOCATION = {
+  latitude: 50.0686,
+  longitude: 19.9551,
+};
 
-export const GeolocationContext =
-  React.createContext<Geolocation>(DEFAULT_GEOLOCATION);
+export const GeolocationContext = React.createContext<GeolocationContext>({
+  geolocation: DEFAULT_GEOLOCATION,
+  setGeolocation: () => {},
+});
 
 const GeolocationProvider: React.FC<Props> = ({ children }) => {
   const [geolocation, setGeolocation] =
     React.useState<Geolocation>(DEFAULT_GEOLOCATION);
 
   const getGeolocation = () => {
+    if (JSON.stringify(geolocation) === JSON.stringify(UEK_GEOLOCATION)) {
+      sendNotification();
+      setGeolocation(DEFAULT_GEOLOCATION);
+    }
     navigator.geolocation.getCurrentPosition((position) => {
       const { latitude, longitude } = position.coords;
       setGeolocation({
-        latitude: round(latitude, 3),
-        longitude: round(longitude, 3),
+        latitude: latitude,
+        longitude: longitude,
       });
     });
   };
@@ -35,7 +50,10 @@ const GeolocationProvider: React.FC<Props> = ({ children }) => {
 
   return (
     <GeolocationContext.Provider
-      value={React.useMemo(() => geolocation, [JSON.stringify(geolocation)])}
+      value={React.useMemo(
+        () => ({ geolocation, setGeolocation }),
+        [JSON.stringify(geolocation), setGeolocation]
+      )}
     >
       {children}
     </GeolocationContext.Provider>
@@ -44,23 +62,23 @@ const GeolocationProvider: React.FC<Props> = ({ children }) => {
 
 export default GeolocationProvider;
 
-// const sendNotification = (fcm_token: string | null) =>
-//   sleep(5000).then(() =>
-//     fetch("https://fcm.googleapis.com/fcm/send", {
-//       method: "POST",
-//       headers: {
-//         Authorization: `key=${process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_KEY}`,
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({
-//         notification: {
-//           title: "Fireabse",
-//           body: "Firebase is awesome",
-//         },
-//         to: fcm_token,
-//       }),
-//     })
-//   );
+const sendNotification = () =>
+  localforage.getItem<string>("fcm_token").then((fcm_token) =>
+    fetch("https://fcm.googleapis.com/fcm/send", {
+      method: "POST",
+      headers: {
+        Authorization: `key=${process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        notification: {
+          title: "Fireabse",
+          body: "Firebase is awesome",
+        },
+        to: fcm_token,
+      }),
+    })
+  );
 
 // const withinRadius = (
 //     point: { latitude: number; longitude: number },
@@ -86,24 +104,3 @@ export default GeolocationProvider;
 
 //     return d <= kms;
 //   };
-
-//   const sleep = (ms: number) => {
-//     return new Promise((resolve) => setTimeout(resolve, ms));
-//   };
-
-// React.useEffect(() => {
-//     if (
-//       currentPosition &&
-//       !notified &&
-//       withinRadius(
-//         currentPosition,
-//         { latitude: 50.0671743, longitude: 20.0263019 },
-//         1
-//       )
-//     ) {
-//       setNotified(true);
-//       localforage
-//         .getItem<string>("fcm_token")
-//         .then((fcm_token) => alert(fcm_token));
-//     }
-//   }, [currentPosition, notified]);
