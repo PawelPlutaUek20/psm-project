@@ -43,16 +43,6 @@ const Home: React.FC<Props> = ({ todos }) => {
       <Link href="/harmonogram">
         <button>harmonogram</button>
       </Link>
-      <button
-        onClick={async () =>
-          await add({
-            title: (Math.random() + 1).toString(36).substring(7),
-            userId: user.id!,
-          })
-        }
-      >
-        add random todo
-      </button>
       <ol>
         {data?.map((todo, key) => (
           <li key={key}>{todo.title}</li>

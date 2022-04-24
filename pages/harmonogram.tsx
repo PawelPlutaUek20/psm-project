@@ -10,44 +10,38 @@ import {
 
 import { withNotifications } from "../components/withNotifications";
 import { GeolocationContext } from "../components/GeolocationProvider";
-import { Textarea, TextInput, Button, ColorPicker } from "@mantine/core";
-import { getUserTodos } from "./api/todos";
+import { Textarea, TextInput, Button } from "@mantine/core";
 import { Todo } from "../types";
-import router from "next/router";
-type Props = {
-  todos: Todo[];
-};
-function refreshData(): any {
-  router.replace(router.asPath);
-}
-const Harmonogram = React.memo<Props>(({todos} ) => {
+import { useCollection } from "@nandorojo/swr-firestore";
+
+
+const Harmonogram = React.memo(( ) => {
   const user = useAuthUser();
   const geolocation = React.useContext(GeolocationContext);
+
+   const { data, add } = useCollection<Todo, any>(
+    user.id ? "todos" : null,
+    {
+      where: ["userId", "==", user.id],
+    },
+  );
   
   const [todo,setTodo]=useState({
     title: "",
     content: "",
     status:"idk",
-    colour:"#39004d"
+    colour:""
   })
 
-  const addtask=()=>{
-    fetch("api/todos", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        userId: user.id,
-        title: todo.title,
-        geolocation: geolocation,
-        content: todo.content,
-        colour:todo.colour
-      }),
-    }).then(() => refreshData())
-
-  }
-
+  const addtask=async () =>
+    await add({
+      userId: user.id!,
+      title: todo.title,
+      geolocation: geolocation,
+      content: todo.content,
+      status:"dik",
+      colour: todo.colour
+    })
   return (
   <>
   <TextInput
@@ -65,30 +59,13 @@ const Harmonogram = React.memo<Props>(({todos} ) => {
       value={todo.content}
       onChange={(event)=>setTodo({...todo,content:event.currentTarget.value})}
     />
-    <ColorPicker
-      format="hex"
-      value={todo.colour}
-      swatches={['#25262b', '#868e96', '#fa5252', '#e64980', '#be4bdb', '#7950f2', '#4c6ef5', '#228be6', '#15aabf', '#12b886', '#40c057', '#82c91e', '#fab005', '#fd7e14']}
-      onChange={(color)=>{setTodo({...todo,colour:color})}}
-    />
-    <Button style={{margin:"10px 0"}} radius="lg" fullWidth onClick={addtask}>add task</Button>
+    <Button fullWidth onClick={addtask}>add task</Button>
     <ol>
-        {todos.map((todo, index) => (
-          <li key={index}><h4 style={{margin:"0 0" }}>{todo.title}</h4>{todo.content},{todo.colour}</li>
+        {data?.map((todo, index) => (
+          <li key={index}><h5>{todo.title}</h5>{todo.content}</li>
         ))}
       </ol>
   </>);
-});
-
-export const getServerSideProps = withAuthUserTokenSSR({
-  whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
-})(async ({ AuthUser }) => {
-  const todos = AuthUser.id && (await getUserTodos(AuthUser.id));
-  return {
-    props: {
-      todos,
-    },
-  };
 });
 
 export default compose(
