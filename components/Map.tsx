@@ -1,7 +1,7 @@
 import React from "react";
 
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
-import { Marker as MarkerProps } from "leaflet";
+import { Marker as MarkerRef } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
 import "leaflet-defaulticon-compatibility";
@@ -12,8 +12,27 @@ type Props = {
   geolocation: Geolocation;
 };
 
+type MarkerProps = {
+  geolocation: {
+    get: {
+      lat: number;
+      lng: number;
+    };
+    set: React.Dispatch<
+      React.SetStateAction<{
+        lat: number;
+        lng: number;
+      }>
+    >;
+  };
+};
+
 const Map: React.FC<Props> = ({ geolocation }) => {
   const { latitude, longitude } = geolocation;
+  const [markerPosition, setMarkerPosition] = React.useState({
+    lat: latitude,
+    lng: longitude,
+  });
 
   return (
     <MapContainer
@@ -29,27 +48,22 @@ const Map: React.FC<Props> = ({ geolocation }) => {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <DraggableMarker geolocation={geolocation} />
+      <DraggableMarker
+        geolocation={{ get: markerPosition, set: setMarkerPosition }}
+      />
     </MapContainer>
   );
 };
 
-const DraggableMarker: React.FC<Props> = ({
-  geolocation: { latitude, longitude },
-}) => {
-  const [position, setPosition] = React.useState({
-    lat: latitude,
-    lng: longitude,
-  });
-  const markerRef = React.useRef<MarkerProps>(null);
+const DraggableMarker: React.FC<MarkerProps> = ({ geolocation }) => {
+  const markerRef = React.useRef<MarkerRef>(null);
   const eventHandlers = React.useMemo(
     () => ({
       dragend() {
         const marker = markerRef.current;
         if (marker != null) {
           const markerPosition = marker.getLatLng();
-          alert(markerPosition);
-          setPosition(markerPosition);
+          geolocation.set(markerPosition);
         }
       },
     }),
@@ -60,7 +74,7 @@ const DraggableMarker: React.FC<Props> = ({
     <Marker
       draggable
       eventHandlers={eventHandlers}
-      position={position}
+      position={geolocation.get}
       ref={markerRef}
     ></Marker>
   );

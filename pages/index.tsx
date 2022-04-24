@@ -22,7 +22,7 @@ type Props = {
 
 const Home: React.FC<Props> = ({ todos }) => {
   const user = useAuthUser();
-  const geolocation = React.useContext(GeolocationContext);
+  const { geolocation, setGeolocation } = React.useContext(GeolocationContext);
 
   const { data, add } = useCollection<Todo, any>(
     user.id ? "todos" : null,
@@ -37,8 +37,10 @@ const Home: React.FC<Props> = ({ todos }) => {
         my location
       </button>
       <button onClick={() => user.signOut()}>sign out</button>
-      <Link href="/map">
-        <button>map</button>
+      <Link href="/map" passHref>
+        <a>
+          <button>Map</button>
+        </a>
       </Link>
       <button
         onClick={async () =>
@@ -49,6 +51,16 @@ const Home: React.FC<Props> = ({ todos }) => {
         }
       >
         add random todo
+      </button>
+      <button
+        onClick={() =>
+          setGeolocation({
+            latitude: 50.0686,
+            longitude: 19.9551,
+          })
+        }
+      >
+        get notified
       </button>
       <ol>
         {data?.map((todo, key) => (

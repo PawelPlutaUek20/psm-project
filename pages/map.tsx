@@ -10,7 +10,7 @@ import { GeolocationContext } from "../components/GeolocationProvider";
 const MapComponent = dynamic(() => import("../components/Map"), { ssr: false });
 
 const Map = React.memo(() => {
-  const geolocation = React.useContext(GeolocationContext);
+  const { geolocation } = React.useContext(GeolocationContext);
 
   return <MapComponent geolocation={geolocation} />;
 });
