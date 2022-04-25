@@ -30,7 +30,6 @@ export const Todos: React.FC<Props> = React.memo(({ userId }) => {
           <li key={key}>{todo.title}</li>
         ))}
       </ol>
-      ;
     </>
   );
 });

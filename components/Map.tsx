@@ -35,23 +35,26 @@ const Map: React.FC<Props> = React.memo(({ geolocation }) => {
   });
 
   return (
-    <MapContainer
-      center={{
-        lat: latitude,
-        lng: longitude,
-      }}
-      zoom={13}
-      scrollWheelZoom={false}
-      style={{ height: "400px", width: "100%" }}
-    >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      <DraggableMarker
-        geolocation={{ get: markerPosition, set: setMarkerPosition }}
-      />
-    </MapContainer>
+    <>
+      <div>{JSON.stringify(markerPosition)}</div>
+      <MapContainer
+        center={{
+          lat: latitude,
+          lng: longitude,
+        }}
+        zoom={13}
+        scrollWheelZoom={false}
+        style={{ height: "400px", width: "100%" }}
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <DraggableMarker
+          geolocation={{ get: markerPosition, set: setMarkerPosition }}
+        />
+      </MapContainer>
+    </>
   );
 });
 
