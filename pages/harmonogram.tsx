@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+zimport React, { useState } from "react";
 
 import compose from "lodash/fp/compose";
 import {
@@ -33,8 +33,8 @@ const Harmonogram = React.memo(( ) => {
     colour:""
   })
 
-  const addtask=async () =>
-    await add({
+  const addtask=() =>
+    add({
       userId: user.id!,
       title: todo.title,
       geolocation: geolocation,
@@ -59,7 +59,7 @@ const Harmonogram = React.memo(( ) => {
       value={todo.content}
       onChange={(event)=>setTodo({...todo,content:event.currentTarget.value})}
     />
-    <Button fullWidth onClick={addtask}>add task</Button>
+    <Button fullWidth onClick={async()=> await addtask()}>add task</Button>
     <ol>
         {data?.map((todo, index) => (
           <li key={index}><h5>{todo.title}</h5>{todo.content}</li>
