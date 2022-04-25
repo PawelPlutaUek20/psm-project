@@ -32,6 +32,7 @@ const Harmonogram = React.memo(( ) => {
     colour:"#e64980"
   })
 
+
   return (
   <>
   <TextInput
