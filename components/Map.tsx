@@ -27,7 +27,7 @@ type MarkerProps = {
   };
 };
 
-const Map: React.FC<Props> = ({ geolocation }) => {
+const Map: React.FC<Props> = React.memo(({ geolocation }) => {
   const { latitude, longitude } = geolocation;
   const [markerPosition, setMarkerPosition] = React.useState({
     lat: latitude,
@@ -53,7 +53,7 @@ const Map: React.FC<Props> = ({ geolocation }) => {
       />
     </MapContainer>
   );
-};
+});
 
 const DraggableMarker: React.FC<MarkerProps> = ({ geolocation }) => {
   const markerRef = React.useRef<MarkerRef>(null);

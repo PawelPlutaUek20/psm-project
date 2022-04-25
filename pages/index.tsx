@@ -2,20 +2,16 @@ import React from "react";
 import Link from "next/link";
 
 import compose from "lodash/fp/compose";
-import { useCollection } from "@nandorojo/swr-firestore";
 import { AuthAction, useAuthUser, withAuthUser } from "next-firebase-auth";
 
+import { Todos } from "../components/Todos";
 import { withNotifications } from "../components/withNotifications";
 import { GeolocationContext } from "../components/GeolocationProvider";
-import { Todo } from "../types";
 
 const Home: React.FC = () => {
   const user = useAuthUser();
   const { geolocation, setGeolocation } = React.useContext(GeolocationContext);
 
-  const { data, add } = useCollection<Todo>(user.id ? "todos" : null, {
-    where: ["userId", "==", user.id],
-  });
   return (
     <>
       <button onClick={() => alert(JSON.stringify(geolocation))}>
@@ -27,16 +23,7 @@ const Home: React.FC = () => {
           <button>Map</button>
         </a>
       </Link>
-      <button
-        onClick={async () =>
-          await add({
-            title: (Math.random() + 1).toString(36).substring(7),
-            userId: user.id!,
-          })
-        }
-      >
-        add random todo
-      </button>
+
       <button
         onClick={() =>
           setGeolocation({
@@ -47,11 +34,7 @@ const Home: React.FC = () => {
       >
         get notified
       </button>
-      <ol>
-        {data?.map((todo, key) => (
-          <li key={key}>{todo.title}</li>
-        ))}
-      </ol>
+      <Todos userId={user.id} />
     </>
   );
 };
