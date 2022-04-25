@@ -22,13 +22,10 @@ const Home: React.FC = () => {
         my location
       </button>
       <button onClick={() => user.signOut()}>sign out</button>
-      <Link href="/map" passHref>
+      <Link href="/harmonogram" passHref>
         <a>
-          <button>Map</button>
+        <button>Harmonogram</button>
         </a>
-      </Link>
-      <Link href="/harmonogram">
-        <button>harmonogram</button>
       </Link>
       <button
         onClick={() =>

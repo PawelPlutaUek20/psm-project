@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 import compose from "lodash/fp/compose";
 import {
   AuthAction,
@@ -12,11 +11,19 @@ import { GeolocationContext } from "../components/GeolocationProvider";
 import { Textarea, TextInput, Button, ColorInput } from "@mantine/core";
 import { Todo } from "../types";
 import { useCollection } from "@nandorojo/swr-firestore";
+import dynamic from "next/dynamic";
+
+const MapComponent = dynamic(() => import("../components/Map"), { ssr: false });
 
 
 const Harmonogram = React.memo(( ) => {
+  
   const user = useAuthUser();
   const { geolocation, setGeolocation } = React.useContext(GeolocationContext);
+  const [markerPosition, setMarkerPosition] = React.useState({
+    lat: geolocation.latitude,
+    lng: geolocation.longitude,
+  });
 
    const { data, add } = useCollection<Todo, any>(
     user.id ? "todos" : null,
@@ -29,9 +36,9 @@ const Harmonogram = React.memo(( ) => {
     title: "",
     content: "",
     status:"idk",
+
     colour:"#e64980"
   })
-
 
   return (
   <>
@@ -51,22 +58,25 @@ const Harmonogram = React.memo(( ) => {
       onChange={(event)=>setTodo({...todo,content:event.currentTarget.value})}
     />
     <ColorInput
+    sx={{marginBottom:200}}
       format="hex"
       value={todo.colour}
       swatches={['#25262b', '#868e96', '#fa5252', '#e64980', '#be4bdb', '#7950f2', '#4c6ef5', '#228be6', '#15aabf', '#12b886', '#40c057', '#82c91e', '#fab005', '#fd7e14']}
       onChange={(color)=>{setTodo({...todo,colour:color})}}
     />
+    <div>{JSON.stringify(markerPosition)}</div>
+    <MapComponent geolocation={geolocation} markerPosition={markerPosition} setMarkerPosition={setMarkerPosition} />;
     <Button fullWidth onClick={async()=> await  add({
       userId: user.id!,
       title: todo.title,
-      geolocation: geolocation,
+      geolocation: JSON.stringify(markerPosition),
       content: todo.content,
       status:"dik",
       colour: todo.colour
     })}>add task</Button>
     <ol>
         {data?.map((todo, index) => (
-          <li key={index}><h5>{todo.title}</h5>{todo.content}</li>
+          <li key={index}><h5>{todo.title}</h5>{todo.content}<p>{JSON.stringify(todo.geolocation)}</p></li>
         ))}
       </ol>
   </>);

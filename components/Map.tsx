@@ -8,9 +8,20 @@ import "leaflet-defaulticon-compatibility";
 
 import { Geolocation } from "../types";
 
+
 type Props = {
-  geolocation: Geolocation;
-};
+  geolocation: Geolocation,
+  markerPosition:{
+    lat: number;
+    lng: number;
+  };
+  setMarkerPosition:React.Dispatch<
+  React.SetStateAction<{
+    lat: number;
+    lng: number;
+  }>
+  >;
+}
 
 type MarkerProps = {
   geolocation: {
@@ -27,12 +38,8 @@ type MarkerProps = {
   };
 };
 
-const Map: React.FC<Props> = ({ geolocation }) => {
+const Map: React.FC<Props> = ({ geolocation, markerPosition, setMarkerPosition }) => {
   const { latitude, longitude } = geolocation;
-  const [markerPosition, setMarkerPosition] = React.useState({
-    lat: latitude,
-    lng: longitude,
-  });
 
   return (
     <MapContainer
