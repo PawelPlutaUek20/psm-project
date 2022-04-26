@@ -115,6 +115,16 @@ const Home: React.FC = () => {
       <Text weight={600} size="xl">Today&apos;s Tasks</Text>
  </Grid.Col>
  <Grid.Col>
+ <button
+        onClick={async () =>
+          await add({
+            title: (Math.random() + 1).toString(36).substring(7),
+            userId: user.id!,
+          })
+        }
+      >
+        add random todo
+      </button>
    <table>
 
    </table>
