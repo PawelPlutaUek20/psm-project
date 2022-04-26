@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 
+import includes from "lodash/includes";
 import { withAuthUser, AuthAction } from "next-firebase-auth";
 
 import {
@@ -54,16 +55,31 @@ const useStyles = createStyles((theme) => ({
 
 const Signup = () => {
   const { classes } = useStyles();
-  const [state, setState] = useSetState({
+
+  const [state, setState] = useSetState<{
+    email: string;
+    password: string;
+    errors: {
+      email?: string;
+      password?: string;
+    };
+  }>({
     email: "",
     password: "",
+    errors: {},
   });
 
   const signup = () =>
     firebase
       .auth()
       .createUserWithEmailAndPassword(state.email, state.password)
-      .catch((e) => console.log(e));
+      .catch((e) => {
+        if (includes(e.code, "password")) {
+          setState({ errors: { password: e.message } });
+        } else if (includes(e.code, "email")) {
+          setState({ errors: { email: e.message } });
+        }
+      });
 
   return (
     <div className={classes.wrapper}>
@@ -81,6 +97,7 @@ const Signup = () => {
         <TextInput
           value={state.email}
           label="Email address"
+          error={state.errors.email}
           placeholder="hello@gmail.com"
           size="md"
           onChange={(e) => {
@@ -90,6 +107,7 @@ const Signup = () => {
         <PasswordInput
           label="Password"
           placeholder="Your password"
+          error={state.errors.password}
           mt="md"
           size="md"
           onChange={(e) => {

@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 
+import includes from "lodash/includes";
 import { withAuthUser, AuthAction } from "next-firebase-auth";
 
 import { useSetState } from "@mantine/hooks";
@@ -22,16 +23,34 @@ import firebase from "../firebase/firebaseClient";
 const Login = () => {
   const { classes } = useStyles();
 
-  const [state, setState] = useSetState({
+  const [state, setState] = useSetState<{
+    email: string;
+    password: string;
+    errors: {
+      email?: string;
+      password?: string;
+    };
+  }>({
     email: "",
     password: "",
+    errors: {},
   });
 
   const signIn = () =>
     firebase
       .auth()
       .signInWithEmailAndPassword(state.email, state.password)
-      .catch((e) => console.log(e));
+      .catch((e) => {
+        console.log(e)
+        if (includes(e.code, "password")) {
+          setState({ errors: { password: e.message } });
+        } else if (includes(e.code, "email")) {
+          setState({ errors: { email: e.message } });
+        }
+      });
+
+  const signInWithGoogle = () =>
+    firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider());
 
   const signInWithGoogle = () =>
     firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider());
@@ -52,6 +71,7 @@ const Login = () => {
         <TextInput
           value={state.email}
           label="Email address"
+          error={state.errors.email}
           placeholder="hello@gmail.com"
           size="md"
           onChange={(e) => {
@@ -61,6 +81,7 @@ const Login = () => {
         <PasswordInput
           label="Password"
           placeholder="Your password"
+          error={state.errors.password}
           mt="md"
           size="md"
           onChange={(e) => {

@@ -19,7 +19,6 @@ export const withNotifications =
         try {
           const token = await firebaseCloudMessaging.init();
           if (token) {
-            console.log("token", token);
             getMessage();
           }
         } catch (error) {
@@ -30,14 +29,17 @@ export const withNotifications =
     }, []);
 
     function getMessage() {
-      console.log("message functions");
       const messaging = firebase.messaging();
-      messaging.onMessage((message) =>
+      messaging.onMessage((message) => {
+        navigator.vibrate(200);
+        new Audio(
+          "http://codeskulptor-demos.commondatastorage.googleapis.com/descent/gotitem.mp3"
+        ).play();
         showNotification({
           title: "Default notification",
           message: "Hey there, your code is awesome! 🤥",
-        })
-      );
+        });
+      });
     }
     return <Component {...props} />;
   };

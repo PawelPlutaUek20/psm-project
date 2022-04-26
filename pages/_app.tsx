@@ -8,6 +8,7 @@ import { FuegoProvider } from "@nandorojo/swr-firestore";
 
 import fuego from "../firebase/firestore/initFirestore";
 import initAuth from "../firebase/auth/initAuth";
+import Layout from "../components/Layout";
 import GeolocationProvider from "../components/GeolocationProvider";
 
 initAuth();
@@ -45,7 +46,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         withNormalizeCSS
         theme={{
           /** Put your mantine theme override here */
-          colorScheme: "light",
+          colorScheme: "dark",
         }}
       >
         {publicRoutes.includes(router.pathname) ? (
@@ -54,7 +55,9 @@ function MyApp({ Component, pageProps }: AppProps) {
           <FuegoProvider fuego={fuego}>
             <NotificationsProvider>
               <GeolocationProvider>
-                <Component {...pageProps} />
+                <Layout>
+                  <Component {...pageProps} />
+                </Layout>
               </GeolocationProvider>
             </NotificationsProvider>
           </FuegoProvider>
