@@ -10,6 +10,11 @@ import { Geolocation } from "../types";
 
 type Props = {
   geolocation: Geolocation;
+  markerPosition: {
+    lat: number;
+    lng: number;
+  };
+  setMarkerPosition: (value: { lat: number; lng: number }) => void;
 };
 
 type MarkerProps = {
@@ -18,45 +23,37 @@ type MarkerProps = {
       lat: number;
       lng: number;
     };
-    set: React.Dispatch<
-      React.SetStateAction<{
-        lat: number;
-        lng: number;
-      }>
-    >;
+    set: (value: { lat: number; lng: number }) => void;
   };
 };
 
-const Map: React.FC<Props> = React.memo(({ geolocation }) => {
+const Map: React.FC<Props> = ({
+  geolocation,
+  markerPosition,
+  setMarkerPosition,
+}) => {
   const { latitude, longitude } = geolocation;
-  const [markerPosition, setMarkerPosition] = React.useState({
-    lat: latitude,
-    lng: longitude,
-  });
 
   return (
-    <>
-      <div>{JSON.stringify(markerPosition)}</div>
-      <MapContainer
-        center={{
-          lat: latitude,
-          lng: longitude,
-        }}
-        zoom={13}
-        scrollWheelZoom={false}
-        style={{ height: "400px", width: "100%" }}
-      >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <DraggableMarker
-          geolocation={{ get: markerPosition, set: setMarkerPosition }}
-        />
-      </MapContainer>
-    </>
+    <MapContainer
+      center={{
+        lat: latitude,
+        lng: longitude,
+      }}
+      zoom={13}
+      scrollWheelZoom={false}
+      style={{ height: "400px", width: "100%" }}
+    >
+      <TileLayer
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      <DraggableMarker
+        geolocation={{ get: markerPosition, set: setMarkerPosition }}
+      />
+    </MapContainer>
   );
-});
+};
 
 const DraggableMarker: React.FC<MarkerProps> = ({ geolocation }) => {
   const markerRef = React.useRef<MarkerRef>(null);

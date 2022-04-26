@@ -4,23 +4,22 @@ import Link from "next/link";
 import compose from "lodash/fp/compose";
 import { AuthAction, useAuthUser, withAuthUser } from "next-firebase-auth";
 
-import { Todos } from "../components/Todos";
 import { withNotifications } from "../components/withNotifications";
 import { GeolocationContext } from "../components/GeolocationProvider";
 
 const Home: React.FC = () => {
   const user = useAuthUser();
   const { geolocation, setGeolocation } = React.useContext(GeolocationContext);
-
+  
   return (
     <>
       <button onClick={() => alert(JSON.stringify(geolocation))}>
         my location
       </button>
       <button onClick={() => user.signOut()}>sign out</button>
-      <Link href="/map" passHref>
+      <Link href="/harmonogram" passHref>
         <a>
-          <button>Map</button>
+        <button>Harmonogram</button>
         </a>
       </Link>
 
@@ -34,7 +33,6 @@ const Home: React.FC = () => {
       >
         get notified
       </button>
-      <Todos userId={user.id} />
     </>
   );
 };
