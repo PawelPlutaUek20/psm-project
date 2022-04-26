@@ -112,7 +112,7 @@ const Home: React.FC = () => {
       marginTop:30,
       marginBottom: 10
     }}>
-      <Text weight={600} size="xl">Today's Tasks</Text>
+      <Text weight={600} size="xl">Today&apos;s Tasks</Text>
  </Grid.Col>
  <Grid.Col>
    <table>
