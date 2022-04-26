@@ -52,9 +52,6 @@ const Login = () => {
   const signInWithGoogle = () =>
     firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider());
 
-  const signInWithGoogle = () =>
-    firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider());
-
   return (
     <div className={classes.wrapper}>
       <Paper className={classes.form} radius={0} p={30}>

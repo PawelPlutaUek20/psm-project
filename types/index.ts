@@ -6,7 +6,7 @@ export type Geolocation = {
 export type Todo = {
   title: string;
   userId: string;
-  geolocation: string
+  geolocation: Geolocation;
   content: string;
   status: string;
   colour:string;
