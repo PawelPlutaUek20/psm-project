@@ -4,18 +4,17 @@ import { AuthAction, useAuthUser, withAuthUser } from "next-firebase-auth";
 
 import { withNotifications } from "../components/withNotifications";
 import { GeolocationContext } from "../components/GeolocationProvider";
-import { Textarea, TextInput, Button, ColorInput } from "@mantine/core";
+import { Textarea, TextInput, Button, ColorInput, Modal } from "@mantine/core";
 import { Todo } from "../types";
 import { useCollection } from "@nandorojo/swr-firestore";
 import dynamic from "next/dynamic";
-import Popup from "reactjs-popup";
-import "reactjs-popup/dist/index.css";
 
 const MapComponent = dynamic(() => import("../components/Map"), { ssr: false });
 
 const Harmonogram = React.memo(() => {
   const user = useAuthUser();
   const { geolocation, setGeolocation } = React.useContext(GeolocationContext);
+  const [opened, setOpened] = useState(false);
   const [markerPosition, setMarkerPosition] = React.useState({
     lat: geolocation.latitude,
     lng: geolocation.longitude,
@@ -55,26 +54,17 @@ const Harmonogram = React.memo(() => {
         }
       />
       <div>{JSON.stringify(markerPosition)}</div>
-      <Popup
-        trigger={<button className="button">Location </button>}
-        modal
-        contentStyle={{ width: "100%" }}
-      >
-        {(close) => {
-          return (
-            <>
-              <MapComponent
-                geolocation={geolocation}
-                markerPosition={markerPosition}
-                setMarkerPosition={setMarkerPosition}
-              />
-              <Button fullWidth onClick={() => close()}>
-                Selcet Location
-              </Button>
-            </>
-          );
-        }}
-      </Popup>
+      <Button onClick={() => setOpened(true)}>Open Modal</Button>
+      <Modal opened={opened} onClose={() => setOpened(false)}>
+        <MapComponent
+          geolocation={geolocation}
+          markerPosition={markerPosition}
+          setMarkerPosition={setMarkerPosition}
+        />
+        <Button fullWidth onClick={() => setOpened(false)}>
+          Selcet Location
+        </Button>
+      </Modal>
       <ColorInput
         sx={{ marginBottom: 200 }}
         format="hex"
