@@ -4,7 +4,6 @@ import Link from "next/link";
 import compose from "lodash/fp/compose";
 import { AuthAction, useAuthUser, withAuthUser } from "next-firebase-auth";
 
-import { Todos } from "../components/Todos";
 import { withNotifications } from "../components/withNotifications";
 import { GeolocationContext } from "../components/GeolocationProvider";
 
@@ -34,7 +33,6 @@ const Home: React.FC = () => {
       >
         get notified
       </button>
-      <Todos userId={user.id} />
     </>
   );
 };

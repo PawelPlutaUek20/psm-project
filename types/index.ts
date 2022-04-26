@@ -7,8 +7,15 @@ export type Todo = {
   title: string;
   userId: string;
   geolocation: Geolocation;
-  content: string;
-  status: string;
-  colour:string;
+  description: string;
+  locationName: string;
+  color: string;
+  start: {
+    seconds: number;
+    nanoseconds: 0;
+  };
+  end: {
+    seconds: number;
+    nanoseconds: 0;
+  };
 };
-
