@@ -9,9 +9,11 @@ import { Button } from "@mantine/core";
 import { withNotifications } from "../components/withNotifications";
 import { TodoComponent } from "../components/Todo";
 import { Todo } from "../types";
+import { TodoModal } from "../components/TodoModal";
 
 const Harmonogram = React.memo(() => {
   const user = useAuthUser();
+  const [opened, setOpened] = React.useState(false);
 
   const { data, add } = useCollection<Todo>(user.id ? "todos" : null, {
     where: ["userId", "==", user.id],
@@ -21,20 +23,21 @@ const Harmonogram = React.memo(() => {
     <>
       <Button
         size="sm"
-        // onClick={async () =>
-        //   await add({
-        //     userId: user.id!,
-        //     title: todo.title,
-        //     geolocation: JSON.stringify(markerPosition),
-        //     content: todo.content,
-        //     status: "dik",
-        //     colour: todo.colour,
-        //   })
-        // }
+        onClick={() => setOpened(true)}
         sx={{ zIndex: 101, position: "absolute", top: 17, right: 17 }}
       >
         Add Task
       </Button>
+      <TodoModal
+        action={async (data) => {
+          await add({ ...data, userId: user.id });
+        }}
+        actionText={"Add"}
+        opened={{
+          get: opened,
+          set: setOpened,
+        }}
+      />
       {data?.map((todo, index) => (
         <TodoComponent key={index} todo={todo} />
       ))}

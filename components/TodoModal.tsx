@@ -19,13 +19,41 @@ const MapComponent = dynamic(() => import("../components/Map"), { ssr: false });
 
 type Props = {
   action: (todo: any) => Promise<any> | null;
-  todo: Todo;
+  actionText: string;
+  todo?: Todo;
   opened: { get: boolean; set: React.Dispatch<React.SetStateAction<boolean>> };
 };
 
-export const TodoModal: React.FC<Props> = ({ todo, opened, action }) => {
+const emptyTodo: Todo = {
+  title: "",
+  userId: "",
+  geolocation: {
+    latitude: 50.0686,
+    longitude: 19.9551,
+  },
+  description: "",
+  locationName: "",
+  color: "#FFE8CC",
+  start: {
+    seconds: new Date().getTime() / 1000,
+    nanoseconds: 0,
+  },
+  end: {
+    seconds: new Date().getTime() / 1000,
+    nanoseconds: 0,
+  },
+};
+
+export const TodoModal: React.FC<Props> = ({
+  todo,
+  opened,
+  action,
+  actionText,
+}) => {
   const theme = useMantineTheme();
-  const [state, setState] = useSetState(todo);
+  const [state, setState] = useSetState<Todo>(todo || emptyTodo);
+
+  console.log(state);
 
   const swatches = Object.keys(theme.colors).map(
     (color) => theme.colors[color][1]
@@ -34,22 +62,22 @@ export const TodoModal: React.FC<Props> = ({ todo, opened, action }) => {
     <Modal
       opened={opened.get}
       onClose={() => opened.set(false)}
-      title="Edit your task"
+      title={`${actionText} task`}
       size="100%"
     >
       <TextInput
         label="Title"
-        placeholder="your@email.com"
-        value={state.title}
+        placeholder="Meeting"
+        value={state.title || undefined}
         onChange={(e) => setState({ title: e.target.value })}
         mb={"xs"}
       />
       <TextInput
         mb={"xs"}
         label="Description"
-        placeholder="your@email.com"
+        placeholder="New project"
         value={state.description}
-        onChange={(e) => setState({ title: e.target.value })}
+        onChange={(e) => setState({ description: e.target.value })}
       />
       <Group grow mb="xs">
         <DatePicker
@@ -76,7 +104,7 @@ export const TodoModal: React.FC<Props> = ({ todo, opened, action }) => {
       <TextInput
         mb="xs"
         label="Location name"
-        placeholder="your@email.com"
+        placeholder="Sightglass Coffee"
         value={state.locationName}
         onChange={(e) => setState({ locationName: e.target.value })}
       />
@@ -106,9 +134,10 @@ export const TodoModal: React.FC<Props> = ({ todo, opened, action }) => {
           onClick={async () => {
             const { __snapshot, hasPendingWrites, exists, ...todo } = state;
             await action(todo);
+            opened.set(false);
           }}
         >
-          Edit task
+          {actionText} task
         </Button>
       </Group>
     </Modal>

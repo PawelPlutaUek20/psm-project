@@ -24,6 +24,7 @@ export const TodoComponent: React.FC<Props> = React.memo(({ todo }) => {
         withBorder
         p="md"
         radius="lg"
+        mb="md"
       >
         <Text weight={600} mb={4}>
           {todo.title}
@@ -58,6 +59,7 @@ export const TodoComponent: React.FC<Props> = React.memo(({ todo }) => {
         opened={{ get: opened, set: setOpened }}
         todo={todo}
         action={update}
+        actionText="Edit"
       />
     </>
   );
