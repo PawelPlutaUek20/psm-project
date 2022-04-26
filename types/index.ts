@@ -4,6 +4,10 @@ export type Geolocation = {
 };
 
 export type Todo = {
+  id?: string;
+  __snapshot?: any;
+  hasPendingWrites?: boolean;
+  exists?: boolean;
   title: string;
   userId: string;
   geolocation: Geolocation;

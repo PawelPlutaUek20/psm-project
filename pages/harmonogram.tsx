@@ -1,12 +1,14 @@
 import React from "react";
+
 import compose from "lodash/fp/compose";
+import { useCollection } from "@nandorojo/swr-firestore";
 import { AuthAction, useAuthUser, withAuthUser } from "next-firebase-auth";
 
-import { withNotifications } from "../components/withNotifications";
 import { Button } from "@mantine/core";
-import { Todo } from "../types";
-import { useCollection } from "@nandorojo/swr-firestore";
+
+import { withNotifications } from "../components/withNotifications";
 import { TodoComponent } from "../components/Todo";
+import { Todo } from "../types";
 
 const Harmonogram = React.memo(() => {
   const user = useAuthUser();
