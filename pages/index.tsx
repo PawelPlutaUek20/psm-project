@@ -7,33 +7,35 @@ import { useCollection } from "@nandorojo/swr-firestore";
 import { withNotifications } from "../components/withNotifications";
 import { GeolocationContext } from "../components/GeolocationProvider";
 
-import {
-  Text,
-  Grid,
-  Card,
-  Button,
-  SegmentedControl,
-} from "@mantine/core";
+import { Text, Grid, Card, Button, SegmentedControl } from "@mantine/core";
 
 const Home: React.FC = () => {
   const user = useAuthUser();
   const { geolocation, setGeolocation } = React.useContext(GeolocationContext);
 
-  const {data} = useCollection<Todo>(user.id ? "todos" : null, {
+  const { data } = useCollection<Todo>(user.id ? "todos" : null, {
     where: ["userId", "==", user.id],
   });
 
   const task = data?.length === 1 ? "task" : "tasks";
   const [value, setValue] = useState("all");
+  const [searchInput, setSearchInput] = useState("");
 
-console.log(data);
+  console.log(searchInput);
 
-  const filteredData =
-  value !== "all"
-    ? data?.filter((todo) => {
-        return todo.status === value;
-      })
-    : data;
+  let filteredData =
+    value !== "all"
+      ? data?.filter((todo) => {
+          return todo.status === value;
+        })
+      : data;
+
+  let searchedFilteredData = filteredData?.filter((todo) => {
+    if (searchInput !== "") {
+      return todo.title.toLowerCase().includes(searchInput.toLowerCase());
+    }
+    return todo;
+  });
 
   <>
     <button onClick={() => alert(JSON.stringify(geolocation))}>
@@ -45,22 +47,6 @@ console.log(data);
         <button>Map</button>
       </a>
     </Link>
-
-    <button
-      onClick={() =>
-        setGeolocation({
-          latitude: 50.0686,
-          longitude: 19.9551,
-        })
-      }
-    >
-      get notified
-    </button>
-    <ol>
-      {data?.map((todo, key) => (
-        <li key={key}>{todo.title}</li>
-      ))}
-    </ol>
   </>;
 
   return (
@@ -90,6 +76,8 @@ console.log(data);
       >
         <input
           type="search"
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
           placeholder="Search for tasks.."
           style={{
             backgroundImage:
@@ -126,7 +114,7 @@ console.log(data);
         />
       </Grid.Col>
       <Grid.Col
-        span={5}
+        span={4}
         style={{
           display: "flex",
           justifyContent: "left",
@@ -141,7 +129,29 @@ console.log(data);
         </Text>
       </Grid.Col>
       <Grid.Col
-        span={6}
+        span={4}
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: 30,
+          marginBottom: 10,
+        }}
+      >
+        <Button
+          color="green"
+          onClick={() =>
+            setGeolocation({
+              latitude: 50.0686,
+              longitude: 19.9551,
+            })
+          }
+        >
+          Get Notified
+        </Button>
+      </Grid.Col>
+      <Grid.Col
+        span={3}
         style={{
           display: "flex",
           justifyContent: "right",
@@ -164,7 +174,7 @@ console.log(data);
         }}
       >
         {data ? (
-          filteredData?.map((todo) => (
+          searchedFilteredData?.map((todo) => (
             <Card
               key={todo.id}
               shadow="sm"
