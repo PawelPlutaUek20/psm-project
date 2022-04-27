@@ -11,7 +11,9 @@ export const withNotifications =
     React.useEffect(() => {
       setToken();
       if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.addEventListener("message", (event) => {});
+        navigator.serviceWorker.addEventListener("message", (event) =>
+          console.log("event for the service worker", event)
+        );
       }
       async function setToken() {
         try {

@@ -46,7 +46,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         withNormalizeCSS
         theme={{
           /** Put your mantine theme override here */
-          colorScheme: "dark",
+          colorScheme: "light",
         }}
       >
         {publicRoutes.includes(router.pathname) ? (
