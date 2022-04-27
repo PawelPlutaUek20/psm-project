@@ -8,6 +8,7 @@ import { withNotifications } from "../components/withNotifications";
 import { GeolocationContext } from "../components/GeolocationProvider";
 
 import { Text, Grid, Card, Button, SegmentedControl } from "@mantine/core";
+import { GrillOff } from "tabler-icons-react";
 
 const Home: React.FC = () => {
   const user = useAuthUser();
@@ -38,15 +39,15 @@ const Home: React.FC = () => {
   });
 
   <>
-    <button onClick={() => alert(JSON.stringify(geolocation))}>
+    {/* <button onClick={() => alert(JSON.stringify(geolocation))}>
       my location
-    </button>
-    <button onClick={() => user.signOut()}>sign out</button>
-    <Link href="/map" passHref>
+    </button> */}
+
+    {/* <Link href="/map" passHref>
       <a>
         <button>Map</button>
       </a>
-    </Link>
+    </Link> */}
   </>;
 
   return (
@@ -207,6 +208,18 @@ const Home: React.FC = () => {
             </Text>
           </Card>
         )}
+      </Grid.Col>
+      <Grid.Col
+        span={11}
+        style={{
+          justifyContent: "center",
+          alignItems: "center",
+          paddingLeft: "10%",
+        }}
+      >
+        <Button color="green" onClick={() => user.signOut()}>
+          Sign Out
+        </Button>
       </Grid.Col>
     </Grid>
   );
