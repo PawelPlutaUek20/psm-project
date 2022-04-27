@@ -27,7 +27,7 @@ type MarkerProps = {
   };
 };
 
-const Map: React.FC<Props> = ({ geolocation }) => {
+const Map: React.FC<Props> = React.memo(({ geolocation }) => {
   const { latitude, longitude } = geolocation;
   const [markerPosition, setMarkerPosition] = React.useState({
     lat: latitude,
@@ -35,25 +35,28 @@ const Map: React.FC<Props> = ({ geolocation }) => {
   });
 
   return (
-    <MapContainer
-      center={{
-        lat: latitude,
-        lng: longitude,
-      }}
-      zoom={13}
-      scrollWheelZoom={false}
-      style={{ height: "400px", width: "100%" }}
-    >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      <DraggableMarker
-        geolocation={{ get: markerPosition, set: setMarkerPosition }}
-      />
-    </MapContainer>
+    <>
+      <div>{JSON.stringify(markerPosition)}</div>
+      <MapContainer
+        center={{
+          lat: latitude,
+          lng: longitude,
+        }}
+        zoom={13}
+        scrollWheelZoom={false}
+        style={{ height: "400px", width: "100%" }}
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <DraggableMarker
+          geolocation={{ get: markerPosition, set: setMarkerPosition }}
+        />
+      </MapContainer>
+    </>
   );
-};
+});
 
 const DraggableMarker: React.FC<MarkerProps> = ({ geolocation }) => {
   const markerRef = React.useRef<MarkerRef>(null);

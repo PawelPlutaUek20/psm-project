@@ -1,13 +1,13 @@
 import React from "react";
 import Link from "next/link";
+import { Todo } from "../types";
 
 import compose from "lodash/fp/compose";
-import { useCollection } from "@nandorojo/swr-firestore";
 import { AuthAction, useAuthUser, withAuthUser } from "next-firebase-auth";
-
+import { useCollection } from "@nandorojo/swr-firestore";
+import { Todos } from "../components/Todos";
 import { withNotifications } from "../components/withNotifications";
 import { GeolocationContext } from "../components/GeolocationProvider";
-import { Todo } from "../types";
 
 import { Text, Grid, SimpleGrid, Badge, Checkbox } from "@mantine/core";
 
@@ -126,7 +126,7 @@ const Home: React.FC = () => {
         add random todo
       </button>
    <table>
-
+   <Todos userId={user.id} />
    </table>
    
  </Grid.Col>
