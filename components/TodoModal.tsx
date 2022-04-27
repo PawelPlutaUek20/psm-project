@@ -9,7 +9,9 @@ import {
   Modal,
   TextInput,
   useMantineTheme,
+  NativeSelect
 } from "@mantine/core";
+import { CircleCheck } from 'tabler-icons-react';
 import { DatePicker } from "@mantine/dates";
 import { useSetState } from "@mantine/hooks";
 
@@ -42,6 +44,7 @@ const emptyTodo: Todo = {
     seconds: new Date().getTime() / 1000,
     nanoseconds: 0,
   },
+  status: "To-Do"
 };
 
 export const TodoModal: React.FC<Props> = ({
@@ -79,6 +82,15 @@ export const TodoModal: React.FC<Props> = ({
         value={state.description}
         onChange={(e) => setState({ description: e.target.value })}
       />
+    <NativeSelect
+      defaultValue={state.status}
+      label="Select task status"
+      rightSection={<CircleCheck size={14} color={'#40bf4f'}/>}
+      required
+      onChange={(event) => setState({status: event.currentTarget.value})}
+      data={["To-Do", "In Progress", "Done"]}
+    />
+
       <Group grow mb="xs">
         <DatePicker
           value={new Date(state.start.seconds * 1000)}

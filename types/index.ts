@@ -22,4 +22,5 @@ export type Todo = {
     seconds: number;
     nanoseconds: 0;
   };
+  status:string;
 };
